@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Item from "./Item";
+import data from '../../data';
 
 class List extends Component {
 
@@ -7,7 +8,7 @@ class List extends Component {
     super(props)
     
     this.state = {
-      itemList: []   
+      itemList: data   
     }
   }
 
@@ -16,8 +17,9 @@ class List extends Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    const task = event.target.task.value
-    this.createItem(task)
+    const task = event.target.task.value;
+    this.createItem(task);
+    event.target.task.value = '';
   }
 
   paintItems = () => {
@@ -32,9 +34,7 @@ class List extends Component {
   }
 
   resetAllItems = () => {
-    const tempList = this.state.itemList
-    this.setState({ itemList: [] })
-    this.setState({ itemList: tempList })
+    this.setState({ itemList: data })
   }
 
   render() {
@@ -47,7 +47,7 @@ class List extends Component {
             <input type="submit" value="Añadir Tarea" />
         </form> 
         <button onClick={this.deleteAllItems}>Borrar todas las tareas</button>
-        <button onClick={this.resetAllItems}>Limpia las tareas</button>
+        <button onClick={this.resetAllItems}>Reset de tareas</button>
 
         {this.paintItems()}
       </section>
