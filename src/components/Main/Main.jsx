@@ -1,16 +1,20 @@
-import React, { Component } from "react";
-import List from '../List'
 
-export class Main extends Component {
+import React, { Component } from 'react'
+import List from '../List';
+import WetherList from '../WetherList';
+
+import {Route, Routes} from 'react-router-dom';
+
+export default class Main extends Component {
   render() {
     return (
       <main>
-        <h1>TO DO LIST</h1>
-        <h3>Agrega tus tareas pendientes</h3>
-        <List/>
+        <Routes>
+          <Route path="/" element={<List/>} exact />
+          <Route path="/todo" element={<List/>} />
+          <Route path="/weather" element={<WetherList/>} />
+        </Routes>
       </main>
     )
   }
 }
-
-export default Main;
