@@ -1,7 +1,8 @@
 import axios from 'axios';
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import WetherCard from './WetherCard';
 
+import { v4 as uuidv4 } from 'uuid';
 
 export default class WetherList extends Component {
   
@@ -9,27 +10,52 @@ export default class WetherList extends Component {
     super(props)
   
     this.state = {
-       cityWeather: '',
-       API_KEY: '80d07c1da72d4b69681e965831dab44d'
+       cityName: '',
+       cityWeather: []
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log("******STATE*******");
-    console.log('viejo', prevState.cityWeather);
-    console.log('nuevo', this.state.cityWeather);
+  weatherApi = async (city) => {
+    const resp = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&APPID=${process.env.REACT_APP_API_KEY}`)
+    const data = resp.data
+
+    const cityName = data.city.name
+    
+    const cityWeatherArray = data.list.map( element => {
+                        return {
+                          key: uuidv4(),
+                          date: element.dt_txt,
+                          temperature: element.main.temp,
+                          clime: `${element.weather[0].main}, ${element.weather[0].description}`
+                        }
+    })
+
+    const cityWeather = cityWeatherArray.slice(0, 5)
+  
+    this.setState({cityName});
+    this.setState({cityWeather});
   }
   
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    const cityName = event.target.city.value
+    const city = event.target.city.value
 
-    const resp = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${this.state.API_KEY}`)
-    console.log(resp);
-  
-    this.setState({cityWeather: cityName});
+    await this.weatherApi(city);
   }
+
+  // paintCityWeather = () => {
+  //   return this.state.cityWeather.map((forecast) => {
+  //     const newkey = uuidv4();
+  //     return <WetherCard forecast={forecast} key={newkey} />
+  //   })
+  // }
+
+  async componentDidMount() {
+    const city = 'Madrid';
+    await this.weatherApi(city);
+  }
+  
 
   render() {
     return (
@@ -40,6 +66,13 @@ export default class WetherList extends Component {
 
           <input type="submit" value="Buscar" />
         </form>
+
+        <section>
+          {this.state.cityName !== '' ? <p>{this.state.cityName}</p> : null}
+          {/* {this.paintCityWeather()} */}
+          <WetherCard info={this.state.cityWeather}/>
+        </section>
+
       </div>
     )
   }

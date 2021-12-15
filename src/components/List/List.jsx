@@ -24,10 +24,8 @@ class List extends Component {
 
     const task = event.target.task.value;
     this.createItem(task);
-  }
 
-  updateInput = () => {
-
+    event.target.task.value = ''
   }
 
   handleChange = event => {
